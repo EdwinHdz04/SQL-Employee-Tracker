@@ -1,4 +1,4 @@
-USE company_db
+USE company_db;
 
 INSERT INTO departments (name)
 VALUES ("Sales"),
