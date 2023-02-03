@@ -1,9 +1,7 @@
 //require mysql2,inquirer and console table
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-
-
-require ('console.table');
+const conTable = require('console.table');
 
 //declaring menu prompts 
 
@@ -84,7 +82,7 @@ function prompt(){
                     break
 
                 case 'exit':
-                    connection.end()
+                    db.end()
                 break;
 
             }    
@@ -99,7 +97,7 @@ function viewAllemployees() {
     INNER JOIN departments ON (departments.id = roles.departments_id)
     ORDER BY employees.id;`;
 
-    connection.query(query, (err, res) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW ALL EMPLOYEES');
@@ -115,7 +113,7 @@ function viewBydepartment(){
     LEFT JOIN departments ON (departments.id = role.departments_id)
     ORDER by departments.name;`;
 
-    connection.query(query, (err, res) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY DEPARTMENT');
@@ -134,7 +132,7 @@ function viewBymanager(){
     INNER JOIN departments ON (departments.id = roles.departments_id) 
     ORDER BY manager;`;
 
-    connection.query(query, (err, res) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY MANAGER');
@@ -152,7 +150,7 @@ function viewAllroles(){
     LEFT JOIN departments ON (departments.id = roles.departments_id)
     ORDER BY roles.title;`;
 
-    connection.query(query, (err, res) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY ROLES');
@@ -166,9 +164,9 @@ function viewAllroles(){
 
 async function addEmployee() {
     const addname = await inquirer.prompt(askName());
-    connection.query('SELECT roles.id, roles.title FROM roles ORDER BY roles.id;', async (err, res) => {
+    db.query('SELECT roles.id, roles.title FROM roles ORDER BY roles.id;', async (err, res) => {
         if (err) throw err;
-        const { role } = await inquirer.prompt([
+        const { roles } = await inquirer.prompt([
             {
                 name: 'roles',
                 type: 'list',
@@ -183,7 +181,7 @@ async function addEmployee() {
                 continue;
             }
         }
-        connection.query('SELECT * FROM employees', async (err, res) => {
+        db.query('SELECT * FROM employees', async (err, res) => {
             if (err) throw err;
             let choices = res.map(res => `${res.first_name} ${res.last_name}`);
             choices.push('none');
@@ -212,8 +210,8 @@ async function addEmployee() {
                 }
             }
             console.log('Employee has been added. Please view all employee to verify...');
-            connection.query(
-                'INSERT INTO employee SET ?',
+            db.query(
+                'INSERT INTO employees SET ?',
                 {
                     first_name: addname.first,
                     last_name: addname.last,
@@ -290,7 +288,7 @@ function askId() {
 async function updateRole() {
     const employeeId = await inquirer.prompt(askId());
 
-    connection.query('SELECT roles.id, roles.title FROM roles ORDER BY roles.id;', async (err, res) => {
+    db.query('SELECT roles.id, roles.title FROM roles ORDER BY roles.id;', async (err, res) => {
         if (err) throw err;
         const { role } = await inquirer.prompt([
             {
@@ -308,8 +306,8 @@ async function updateRole() {
             }
         }
         connection.query(`UPDATE employee 
-        SET role_id = ${roleId}
-        WHERE employee.id = ${employeeId.name}`, async (err, res) => {
+        SET roles_id = ${roleId}
+        WHERE employees.id = ${employeeId.name}`, async (err, res) => {
             if (err) throw err;
             console.log('Role has been updated..')
             prompt();
