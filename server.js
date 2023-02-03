@@ -2,6 +2,7 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const Connection = require('mysql2/typings/mysql/lib/Connection');
+
 require ('console.table');
 
 //declaring menu prompts 
@@ -16,11 +17,8 @@ const menuMessages = {
     updateEmployeeManager : " Update Employee Manger",
     viewAllroles: "View All Roles",
     exit: "exit"
-
-
 }
   
-
 //Connect to database
 const db = mysql.createConnection(
     {
@@ -30,10 +28,12 @@ const db = mysql.createConnection(
         //MySQL password
         password: '338186',
         database: 'company_db'
-    },
-    console.log(`connected to the company_db database`)
-);
-
+    });
+    
+db.connect(err => {
+    if(err) throw err;
+    prompt();
+});
 
 //This function will create menu prompts
 function prompt(){
@@ -93,65 +93,75 @@ function prompt(){
     });
 };
 
+function viewAllemployees() {
+    const query = `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS departments, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+    FROM employees
+    LEFT JOIN employees manager ON (roles.id = employees.roles_id) 
+    INNER JOIN roles ON (roles.id = employees.roles_id)
+    INNER JOIN departments ON (departments.id = roles.departments_id)
+    ORDER BY employees.id;`;
 
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('VIEW ALL EMPLOYEES');
+        console.log('\n');
+        console.table(res);
+        prompt();
+    });
+}
+function viewBydepartment(){
+    const query = `SELECT departments.name AS departments, roles.title, employees.id, employees.first_name, employees.last_name
+    FROM employees
+    LEFT JOIN roles ON (roles.id = employees.roles_id)
+    LEFT JOIN departments ON (departments.id = role.departments_id)
+    ORDER by departments.name;`;
 
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('VIEW EMPLOYEES BY DEPARTMENT');
+        console.log('\n');
+        console.table(res);
+        prompt();
 
-
-
-
-
-const addEmployee = () =>{
-    inquirer
-  .prompt([
-    {
-      type: 'list',
-      name: 'addEmployee',
-      message: 'What type of employee do you want to create?',
-      choices: ['sales Lead','Sales Person ','Lead Engineer','Software Engineer','Account Manager','Accountant','Legal Team Lead','Lawyer'],
-    }
-
-])
-.then(answers => {
-    switch (answers.addEmployee) {
-        case "sales Lead" : 
-             makeSaleslead();
-            break;
-    
-        case "Sales Person" : 
-            makeSalesperson();
-            break;
-
-        case "Lead Engineer " :
-            makeLeadEngineer();
-            break;
-
-        case "Software Engineer" :
-            makeSoftwareengineer();
-             break;
-
-        case "Account Manager" :
-            makeAccountmanager();
-            break;  
-
-        case "Accountant" :
-            makeAccountant();
-            break;
-                  
-        case "Legal Team Lead" :
-            makeLegalteamlead();
-            break;
-        
-        case "Legal Team Lead" :
-            makeLegalteamlead();
-            break;    
-
-        let htmlPageContent = generateHTML(answers)
-        createFile('./src/barebones.html', htmlPageContent);
-    }  
-}) 
+    });
 }
 
+function viewBymanager(){
+    const query = `SELECT CONCAT(manager.first_name, ' ', manager.last_name) AS manager, departments.name AS departments, employees.id, employees.first_name, employees.last_name, roles.title
+    FROM employees
+    LEFT JOIN employees manager ON manager.id = employees.manager_id
+    INNER JOIN roles ON (roles.id = employees.roles_id && employees.manager_id != 'NULL')
+    INNER JOIN departments ON (departments.id = roles.departments_id) 
+    ORDER BY manager;`;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('VIEW EMPLOYEES BY MANAGER');
+        console.log('\n');
+        console.table(res);
+        prompt();
+
+    });
+}
+
+function viewAllroles(){
+    const query = `SELECT roles.title, employees.id,  employees.first_name, employees.last_name, departments.name AS departments
+    FROM employees
+    LEFT JOIN roles ON (roles.id = employees.roles_id)
+    LEFT JOIN departments ON (departments.id = roles.departments_id)
+    ORDER BY roles.title;`;
+
+    connection.query(query, (err, res) => {
+        if (err) throw err;
+        console.log('\n');
+        console.log('VIEW EMPLOYEES BY ROLES');
+        console.log('\n');
+        console.table(res);
+        prompt();
+
+    });
+
+}
