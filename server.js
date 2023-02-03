@@ -261,7 +261,7 @@ async function removeEmployee() {
         }
     ]);
 
-    db.query('DELETE FROM employee WHERE ?',
+    db.query('DELETE FROM employees WHERE ?',
         {
             id: answer.first
         },
@@ -300,12 +300,12 @@ async function updateRole() {
         ]);
         let roleId;
         for (const row of res) {
-            if (row.title === roles) {
-                rolesId = row.id;
+            if (row.title === role) {
+                roleId = row.id;
                 continue;
             }
         }
-        db.query(`UPDATE employee 
+        db.query(`UPDATE employees 
         SET roles_id = ${roleId}
         WHERE employees.id = ${employeeId.name}`, async (err, res) => {
             if (err) throw err;
