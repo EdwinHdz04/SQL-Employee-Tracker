@@ -51,33 +51,33 @@ function prompt(){
             'exit' ]
      })
      .then(answer => {
-        console.log('answer', answer);
+  
             switch ( answer.action){
-                case viewAllemployees:
+                case "viewAllemployees":
                     viewAllemployees();
                     break
                 
-                case viewBydepartment:
+                case "viewBydepartment":
                     viewBydepartment();
                     break
 
-                case viewBymanager:
+                case "viewBymanager":
                     viewBymanager();
                     break
 
-                case addEmployee:
+                case "addEmployee":
                     addEmployee();
                     break
 
-                case removeEmployee:
+                case "removeEmployee":
                     removeEmployee();
                     break
 
-                case updateRole:
+                case "updateRole":
                     updateRole();
                     break
 
-                case viewAllroles:
+                case "iewAllroles":
                     viewAllroles();
                     break
 
@@ -97,7 +97,7 @@ function viewAllemployees() {
     INNER JOIN departments ON (departments.id = roles.departments_id)
     ORDER BY employees.id;`;
 
-    db.query(query, (err, res) => {
+    db.query(query, (_err_, _res_) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW ALL EMPLOYEES');
@@ -113,7 +113,7 @@ function viewBydepartment(){
     LEFT JOIN departments ON (departments.id = role.departments_id)
     ORDER by departments.name;`;
 
-    db.query(query, (err, res) => {
+    db.query(query, (_err_, _res_) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY DEPARTMENT');
@@ -132,7 +132,7 @@ function viewBymanager(){
     INNER JOIN departments ON (departments.id = roles.departments_id) 
     ORDER BY manager;`;
 
-    db.query(query, (err, res) => {
+    db.query(query, (_err_, _res_) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY MANAGER');
@@ -150,7 +150,7 @@ function viewAllroles(){
     LEFT JOIN departments ON (departments.id = roles.departments_id)
     ORDER BY roles.title;`;
 
-    db.query(query, (err, res) => {
+    db.query(query, (_err_, _res_) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY ROLES');
