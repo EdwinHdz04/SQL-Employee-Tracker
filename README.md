@@ -38,7 +38,11 @@ Run
 node index.js
 
 Dependencies
-
+dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.1.0"
+  }
 
 
 
@@ -51,11 +55,11 @@ Author
 
 Edwin Hernandez
 https://github.com/EdwinHdz04/SQL-Employee-Tracker.git
+https://drive.google.com/file/d/1tMcgFH4pG68whp3HR6Zd4SHyBSSd549B/view
 
 
 
 
-A walkthrough video demonstrating the functionality of the application.
 
 
 
