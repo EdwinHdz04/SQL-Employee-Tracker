@@ -77,7 +77,7 @@ function prompt(){
                     updateRole();
                     break
 
-                case "iewAllroles":
+                case "viewAllroles":
                     viewAllroles();
                     break
 
@@ -92,12 +92,12 @@ function prompt(){
 function viewAllemployees() {
     const query = `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS departments, roles.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager
     FROM employees
-    LEFT JOIN employees manager ON (roles.id = employees.roles_id) 
+    LEFT JOIN employees manager on manager.id = employees.manager_id
     INNER JOIN roles ON (roles.id = employees.roles_id)
     INNER JOIN departments ON (departments.id = roles.departments_id)
     ORDER BY employees.id;`;
 
-    db.query(query, (_err_, _res_) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW ALL EMPLOYEES');
@@ -110,10 +110,10 @@ function viewBydepartment(){
     const query = `SELECT departments.name AS departments, roles.title, employees.id, employees.first_name, employees.last_name
     FROM employees
     LEFT JOIN roles ON (roles.id = employees.roles_id)
-    LEFT JOIN departments ON (departments.id = role.departments_id)
+    LEFT JOIN departments ON (departments.id = roles.departments_id)
     ORDER by departments.name;`;
 
-    db.query(query, (_err_, _res_) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY DEPARTMENT');
@@ -132,7 +132,7 @@ function viewBymanager(){
     INNER JOIN departments ON (departments.id = roles.departments_id) 
     ORDER BY manager;`;
 
-    db.query(query, (_err_, _res_) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY MANAGER');
@@ -150,7 +150,7 @@ function viewAllroles(){
     LEFT JOIN departments ON (departments.id = roles.departments_id)
     ORDER BY roles.title;`;
 
-    db.query(query, (_err_, _res_) => {
+    db.query(query, (err, res) => {
         if (err) throw err;
         console.log('\n');
         console.log('VIEW EMPLOYEES BY ROLES');
@@ -243,7 +243,7 @@ function remove(input) {
         }
     ]).then(answer => {
         if (input === 'delete' && answer.action === "yes") removeEmployee();
-        else if (input === 'role' && answer.action === "yes") updateRole();
+        else if (input === 'roles' && answer.action === "yes") updateRole();
         else viewAllEmployees();
 
 
@@ -261,7 +261,7 @@ async function removeEmployee() {
         }
     ]);
 
-    connection.query('DELETE FROM employee WHERE ?',
+    db.query('DELETE FROM employee WHERE ?',
         {
             id: answer.first
         },
@@ -305,7 +305,7 @@ async function updateRole() {
                 continue;
             }
         }
-        connection.query(`UPDATE employee 
+        db.query(`UPDATE employee 
         SET roles_id = ${roleId}
         WHERE employees.id = ${employeeId.name}`, async (err, res) => {
             if (err) throw err;
