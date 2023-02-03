@@ -50,8 +50,7 @@ function prompt(){
             addEmployee,
             removeEmployee,
             updateRole,
-            quit
-        ]
+            'exit' ]
      })
      .then(answer => {
         console.log('answer', answer);
@@ -84,7 +83,7 @@ function prompt(){
                     viewAllroles();
                     break
 
-                case exit:
+                case 'exit':
                     connection.end()
                 break;
 
