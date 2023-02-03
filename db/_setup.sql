@@ -29,3 +29,4 @@ SELECT employees.id, employees.first_name, employees.last_name, roles.title, dep
     INNER JOIN roles ON (roles.id = employees.roles_id)
     INNER JOIN departments ON (departments.id = roles.departments_id)
     ORDER BY employees.id;
+
