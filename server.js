@@ -6,8 +6,17 @@ require ('console.table');
 
 //declaring menu prompts 
 
-const menuMessages={
+const menuMessages = {
     viewAllemployees: "View All Employees",
+    viewBydepartment: "View All Employees By Department",
+    viewBymanager: "View All Employees By Manager",
+    addEmployee: "add An Employee",
+    removeEmployee: "Remove An Employee",
+    updateRole: "Update Employee Role",
+    updateEmployeeManager : " Update Employee Manger",
+    viewAllroles: "View All Roles",
+    exit: "exit"
+
 
 }
   
